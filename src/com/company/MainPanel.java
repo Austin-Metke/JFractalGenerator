@@ -10,7 +10,7 @@ public class MainPanel extends JPanel {
     static BufferedImage buffimg = new BufferedImage((int)Main.WIDTH, (int)Main.HEIGHT, 1);
     
     /**
-     * MainPanel() is the constructor for the main panel
+     * MainPanel() is the constructor for the main frame
      */
     MainPanel() {
 
