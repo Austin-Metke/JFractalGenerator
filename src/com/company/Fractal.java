@@ -55,7 +55,6 @@ public class Fractal {
 
                     z = z.square().add(c);
                     iterationCounter += 1;
-                    System.out.println(iterationCounter);
                 }
 
 
