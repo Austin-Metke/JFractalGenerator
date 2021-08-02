@@ -10,17 +10,17 @@ public class MainPanel extends JPanel {
     static BufferedImage buffimg = new BufferedImage((int)Main.WIDTH, (int)Main.HEIGHT, 1);
     
     /**
-     * MainPanel() is the constructor for the main panel;
+     * MainPanel() is the constructor for the main panel
      */
     MainPanel() {
 
-        setBounds(0, 0, 1920, 1080); //center of screen, 1920x1080 dimensions
+        setBounds(0, 0, 1920, 1080); //Opens at the center of screen with 1920x1080 dimensions
         setVisible(true);
         setLayout(null);  //No desired layout, hence null
 
     }
     /**
-     * paintComponent is the method that draws the fractal
+     * paintComponent(Graphics g) is the method that draws the fractal
      */
     public void paintComponent(Graphics g) {
         g.drawImage(buffimg, 0, 0, (ImageObserver)null);
