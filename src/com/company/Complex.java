@@ -55,8 +55,8 @@ public class Complex {
      */
 
     public Complex add(Complex complex_number) {
-        BigDecimal a = null;
-        BigDecimal b = null;
+        BigDecimal a = new BigDecimal(1);
+        BigDecimal b = new BigDecimal(1);
 
         a.equals(this.real.add(complex_number.real));
         b.equals(this.imaginary.add(complex_number.imaginary));
@@ -88,7 +88,7 @@ public class Complex {
     public BigDecimal abs() {
         //This doesn't do what it should for some reason
 
-        BigDecimal a1 = null;
+        BigDecimal a1 = new BigDecimal(1);
 
         a1.equals(real.multiply(real).add(imaginary.multiply(imaginary)));
 
@@ -106,8 +106,8 @@ public class Complex {
     public Complex square() {
 
 
-        BigDecimal _real = null;
-        BigDecimal _imaginary = null;
+        BigDecimal _real = new BigDecimal(1);
+        BigDecimal _imaginary = new BigDecimal(1);
 
         _real.equals(this.real.multiply(this.real).subtract(this.imaginary.multiply(this.imaginary)));
         _imaginary.equals(this.real.multiply(this.imaginary).multiply(BigDecimal.valueOf(2)));

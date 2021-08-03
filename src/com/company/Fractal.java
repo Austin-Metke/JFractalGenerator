@@ -3,7 +3,7 @@ package com.company;
 import java.awt.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-
+import java.math.RoundingMode;
 
 
 public class Fractal {
@@ -53,11 +53,10 @@ public class Fractal {
 
                 //Default number for Julia set
 
-                BigDecimal r = null;
-                r.equals(-0.4);
+                BigDecimal r = new BigDecimal(-0.4);
 
-                BigDecimal i = null;
-                i.equals(-0.59);
+
+                BigDecimal i = new BigDecimal(-0.58);
 
                 c = new Complex(r, i);
 
@@ -86,7 +85,6 @@ public class Fractal {
                 //Will add later
 
         }
-
         return iterationCounter;
     }
 
@@ -111,11 +109,12 @@ public class Fractal {
         for (int x = startx; (double) x < width; x++) {
             for (int y = starty; (double) y < height; y++) {
 
-                BigDecimal real = null;
-                BigDecimal imaginary = null;
+                BigDecimal real = new BigDecimal(1);
+                BigDecimal imaginary = new BigDecimal(1);
 
-                real.equals(RESTART.add(BigDecimal.valueOf(x)).divide(BigDecimal.valueOf(width)).multiply(REEND.subtract(RESTART)));
-                imaginary.equals(IMSTART.add(BigDecimal.valueOf(y)).divide(BigDecimal.valueOf(height)).multiply(IMEND.subtract(IMSTART)));
+
+                real.equals(RESTART.add(BigDecimal.valueOf(x)).divide(BigDecimal.valueOf(width), 2, RoundingMode.HALF_UP).multiply(REEND.subtract(RESTART)));
+                imaginary.equals(IMSTART.add(BigDecimal.valueOf(y)).divide(BigDecimal.valueOf(height), 2, RoundingMode.HALF_UP).multiply(IMEND.subtract(IMSTART)));
 
                 Complex c = new Complex(real, imaginary);
 
