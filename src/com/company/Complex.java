@@ -71,9 +71,9 @@ public class Complex {
      * @return a <code>Complex</code> object which is the conjugate of the current complex number
      */
 
-    public Complex conjugate() {
+/*    public Complex conjugate() {
         return new Complex(this.real, -this.imaginary);
-    }
+    }*/
 
     /**
      * The modulus, magnitude or the absolute value of current complex number.
@@ -81,14 +81,18 @@ public class Complex {
      * @return the magnitude or modulus of current complex number
      */
 
-    public double mod() {
+/*    public double mod() {
         return Math.sqrt(Math.pow(this.real, 2) + Math.pow(this.imaginary, 2));
-    }
+    }*/
 
-    public double abs() {
+    public BigDecimal abs() {
         //This doesn't do what it should for some reason
-        return Math.hypot(real, imaginary);
 
+        BigDecimal a1 = null;
+
+        a1.equals(real.multiply(real).add(imaginary.multiply(imaginary)));
+
+        return a1.abs();
 
     }
 
@@ -100,8 +104,15 @@ public class Complex {
      */
 
     public Complex square() {
-        double _real = this.real * this.real - this.imaginary * this.imaginary;
-        double _imaginary = 2 * this.real * this.imaginary;
+
+
+        BigDecimal _real = null;
+        BigDecimal _imaginary = null;
+
+        _real.equals(this.real.multiply(this.real).subtract(this.imaginary.multiply(this.imaginary)));
+        _imaginary.equals(this.real.multiply(this.imaginary).multiply(BigDecimal.valueOf(2)));
+
+
         return new Complex(_real, _imaginary);
     }
 
@@ -112,7 +123,7 @@ public class Complex {
      * @return
      */
 
-    public Complex multiply(Complex complex_number) {
+/*    public Complex multiply(Complex complex_number) {
         double _real = this.real * complex_number.real - this.imaginary * complex_number.imaginary;
         double _imaginary = this.real * complex_number.imaginary + this.imaginary * complex_number.real;
 
@@ -127,10 +138,15 @@ public class Complex {
         double real = Math.sin(c.real);
         double imaginary = Math.sin(c.imaginary);
 
+        BigDecimal real;
+        BigDecimal imaginary;
+
+
+
 
         return new Complex(real, imaginary);
 
-    }
+    }*/
 
 
     /**
