@@ -20,7 +20,7 @@ public class Main {
 
         Fractal fractal = new Fractal();
         
-        fractal.GenerateFractal(fractal.RESTART, fractal.REEND, fractal.IMSTART, fractal.IMEND, WIDTH, HEIGHT, 0, 0, iterationsArr, Fractal.GENERATE_JULIA, fractal.ITERATIONS);
+        fractal.GenerateFractal(fractal.RESTART, fractal.REEND, fractal.IMSTART, fractal.IMEND, WIDTH, HEIGHT, 0, 0, iterationsArr, Fractal.GENERATE_MANDELBROT, fractal.ITERATIONS);
         fractal.Fractal();
 
     }

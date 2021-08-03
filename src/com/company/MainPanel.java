@@ -22,6 +22,7 @@ public class MainPanel extends JPanel {
     /**
      * paintComponent(Graphics g) is the method that draws the fractal
      */
+
     public void paintComponent(Graphics g) {
         g.drawImage(buffimg, 0, 0, (ImageObserver)null);
         this.repaint();

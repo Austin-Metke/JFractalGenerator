@@ -1,5 +1,7 @@
 package com.company;
 
+import java.math.BigDecimal;
+
 /**
  * <code>Complex</code> is a class which implements complex numbers in Java.
  * It includes basic operations that can be performed on complex numbers such as,
@@ -8,23 +10,24 @@ package com.company;
  * @author Abdul Fatir
  * @version 1.0
  */
+
 public class Complex {
     /**
      * The real, Re(z), part of the <code>Complex</code>.
      */
-    private double real;
+    private BigDecimal real;
     /**
      * The imaginary, Im(z), part of the <code>Complex</code>.
      */
-    private double imaginary;
+    private BigDecimal imaginary;
 
     /**
      * Constructs a new <code>Complex</code> object with both real and imaginary parts 0 (z = 0 + 0i).
      */
 
     public Complex() {
-        real = 0.0;
-        imaginary = 0.0;
+        real.equals(0.0);
+        imaginary.equals(0.0);
     }
 
     /**
@@ -34,12 +37,13 @@ public class Complex {
      * @param imaginary the imaginary part, Im(z), of the complex number
      */
 
-    public Complex(double real, double imaginary) {
+    public Complex(BigDecimal real, BigDecimal imaginary) {
         this.real = real;
         this.imaginary = imaginary;
+
     }
 
-    public Complex(double real) {
+    public Complex(BigDecimal real) {
         this.real = real;
     }
 
@@ -51,9 +55,14 @@ public class Complex {
      */
 
     public Complex add(Complex complex_number) {
-        double a = this.real + complex_number.real;
-        double b = this.imaginary + complex_number.imaginary;
+        BigDecimal a = null;
+        BigDecimal b = null;
+
+        a.equals(this.real.add(complex_number.real));
+        b.equals(this.imaginary.add(complex_number.imaginary));
+
         return new Complex(a, b);
+
     }
 
     /**
