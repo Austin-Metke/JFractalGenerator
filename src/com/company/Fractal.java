@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 
+
 public class Fractal {
 
     //Pointers to generate types of sets
