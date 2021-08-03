@@ -1,6 +1,8 @@
 package com.company;
 
 import java.awt.*;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
 
 public class Fractal {
@@ -11,10 +13,10 @@ public class Fractal {
     public static final int GENERATE_CUSTOM = 2;
 
     //Start and end of the coordinate plane
-    double RESTART = -2;
-    double REEND = 1;
-    double IMSTART = -1;
-    double IMEND = 1;
+    BigDecimal RESTART = BigDecimal.valueOf(-2);
+    BigDecimal REEND = BigDecimal.valueOf(1);
+    BigDecimal IMSTART = BigDecimal.valueOf(-1);
+    BigDecimal IMEND = BigDecimal.valueOf(1);
     private int[][] iterationsArr;
     private int startx;
     private int starty;
@@ -23,7 +25,7 @@ public class Fractal {
     private int FRACTAL_TYPE;
 
     //Default max iterations
-     int ITERATIONS = 255;
+    int ITERATIONS = 255;
 
     public Fractal() {
 
@@ -39,7 +41,7 @@ public class Fractal {
             case 0:
                 //Computes iterations for Mandelbrot set
 
-                while (z.abs() < 2.0 && iterationCounter < ITERATIONS) {
+                while (z.abs().compareTo(BigDecimal.valueOf(2.0)) < 2.0 && iterationCounter < ITERATIONS) {
 
                     z = z.square().add(c);
                     iterationCounter += 1;
@@ -49,14 +51,20 @@ public class Fractal {
                 //Computes iterations for Julia set
 
                 //Default number for Julia set
-                c = new Complex(-0.4, -0.59);
 
-                while (z.abs() < 2.0 && iterationCounter < ITERATIONS) {
+                BigDecimal r = null;
+                r.equals(-0.4);
+
+                BigDecimal i = null;
+                i.equals(-0.59);
+
+                c = new Complex(r, i);
+
+                while (z.abs().compareTo(BigDecimal.valueOf(2.0)) < 2.0 && iterationCounter < ITERATIONS) {
 
                     z = z.square().add(c);
                     iterationCounter += 1;
                 }
-
 
 
                 //Grabs a complex number from juliaComplex() text field if one is present
@@ -81,7 +89,7 @@ public class Fractal {
         return iterationCounter;
     }
 
-    public void GenerateFractal(double RESTART, double REEND, double IMSTART, double IMEND, double width, double height, int startx, int starty, int[][] iterationsArr, int FRACTAL_TYPE, int ITERATIONS) {
+    public void GenerateFractal(BigDecimal RESTART, BigDecimal REEND, BigDecimal IMSTART, BigDecimal IMEND, double width, double height, int startx, int starty, int[][] iterationsArr, int FRACTAL_TYPE, int ITERATIONS) {
 
         this.RESTART = RESTART;
         this.REEND = REEND;
@@ -102,8 +110,11 @@ public class Fractal {
         for (int x = startx; (double) x < width; x++) {
             for (int y = starty; (double) y < height; y++) {
 
-                double real = RESTART + (double) x / width * (REEND - RESTART);
-                double imaginary = IMSTART + (double) y / height * (IMEND - IMSTART);
+                BigDecimal real = null;
+                BigDecimal imaginary = null;
+
+                real.equals(RESTART.add(BigDecimal.valueOf(x)).divide(BigDecimal.valueOf(width)).multiply(REEND.subtract(RESTART)));
+                imaginary.equals(IMSTART.add(BigDecimal.valueOf(y)).divide(BigDecimal.valueOf(height)).multiply(IMEND.subtract(IMSTART)));
 
                 Complex c = new Complex(real, imaginary);
 
