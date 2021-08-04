@@ -133,6 +133,7 @@ public class Fractal {
                 float hue = 0.255f * (float) iterationsArr[x][y] / (float) ITERATIONS;
                 float brightness = 0.0f;
 
+
                 if (this.iterationsArr[x][y] < ITERATIONS) {
                     brightness = 1.0f;
                 }

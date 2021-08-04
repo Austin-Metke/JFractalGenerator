@@ -55,11 +55,11 @@ public class Complex {
      */
 
     public Complex add(Complex complex_number) {
-        BigDecimal a = new BigDecimal(1);
-        BigDecimal b = new BigDecimal(1);
+        BigDecimal a;
+        BigDecimal b;
 
-        a.equals(this.real.add(complex_number.real));
-        b.equals(this.imaginary.add(complex_number.imaginary));
+        a = new BigDecimal(String.valueOf(this.real.add(complex_number.real)));
+        b = new BigDecimal(String.valueOf((this.imaginary.add(complex_number.imaginary))));
 
         return new Complex(a, b);
 
@@ -106,11 +106,11 @@ public class Complex {
     public Complex square() {
 
 
-        BigDecimal _real = new BigDecimal(1);
-        BigDecimal _imaginary = new BigDecimal(1);
+        BigDecimal _real;
+        BigDecimal _imaginary;
 
-        _real.equals(this.real.multiply(this.real).subtract(this.imaginary.multiply(this.imaginary)));
-        _imaginary.equals(this.real.multiply(this.imaginary).multiply(BigDecimal.valueOf(2)));
+        _real = new BigDecimal(String.valueOf(this.real.multiply(this.real).subtract(this.imaginary.multiply(this.imaginary))));
+        _imaginary = new BigDecimal(String.valueOf((this.real.multiply(this.imaginary).multiply(BigDecimal.valueOf(2)))));
 
 
         return new Complex(_real, _imaginary);
