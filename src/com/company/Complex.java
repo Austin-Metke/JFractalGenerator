@@ -88,9 +88,9 @@ public class Complex {
     public BigDecimal abs() {
         //This doesn't do what it should for some reason
 
-        BigDecimal a1 = new BigDecimal(1);
+        BigDecimal a1;
 
-        a1.equals(real.multiply(real).add(imaginary.multiply(imaginary)));
+        a1 = new BigDecimal(String.valueOf(this.real.multiply(this.real).add(this.imaginary.multiply(this.imaginary))));
 
         return a1.abs();
 

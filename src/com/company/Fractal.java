@@ -53,14 +53,18 @@ public class Fractal {
 
                 //Default number for Julia set
 
-                BigDecimal r = new BigDecimal(-0.4);
+                BigDecimal r = new BigDecimal("-0.4");
 
 
-                BigDecimal i = new BigDecimal(-0.58);
+                BigDecimal i = new BigDecimal("-0.58");
 
                 c = new Complex(r, i);
 
-                while (z.abs().compareTo(BigDecimal.valueOf(2.0)) < 2.0 && iterationCounter < ITERATIONS) {
+                int compare = z.abs().compareTo(BigDecimal.valueOf(2));
+
+
+
+                while (compare == -1 && iterationCounter < ITERATIONS) {
 
                     z = z.square().add(c);
                     iterationCounter += 1;
@@ -85,6 +89,8 @@ public class Fractal {
                 //Will add later
 
         }
+
+
         return iterationCounter;
     }
 
@@ -109,16 +115,21 @@ public class Fractal {
         for (int x = startx; (double) x < width; x++) {
             for (int y = starty; (double) y < height; y++) {
 
-                BigDecimal real = new BigDecimal(1);
-                BigDecimal imaginary = new BigDecimal(1);
 
 
-                real.equals(RESTART.add(BigDecimal.valueOf(x)).divide(BigDecimal.valueOf(width), 2, RoundingMode.HALF_UP).multiply(REEND.subtract(RESTART)));
-                imaginary.equals(IMSTART.add(BigDecimal.valueOf(y)).divide(BigDecimal.valueOf(height), 2, RoundingMode.HALF_UP).multiply(IMEND.subtract(IMSTART)));
+
+               BigDecimal real;
+               BigDecimal imaginary;
+
+              real = new BigDecimal(String.valueOf(RESTART.add(BigDecimal.valueOf(x)).divide(BigDecimal.valueOf(width), 2, RoundingMode.HALF_EVEN).multiply(REEND.subtract(RESTART))));
+              imaginary = new BigDecimal(String.valueOf(IMSTART.add(BigDecimal.valueOf(y)).divide(BigDecimal.valueOf(height), 2, RoundingMode.HALF_EVEN).multiply(IMEND.subtract(IMSTART))));
+
 
                 Complex c = new Complex(real, imaginary);
 
                 iterationsArr[x][y] = ComputeIterations(c, FRACTAL_TYPE);
+
+
                 float hue = 0.255f * (float) iterationsArr[x][y] / (float) ITERATIONS;
                 float brightness = 0.0f;
 
