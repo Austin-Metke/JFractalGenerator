@@ -1,31 +1,35 @@
 package com.company;
 
+import com.company.MainPanel;
+
 import java.awt.*;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
-
+import javax.imageio.ImageIO;
+import java.io.File;
 
 public class Fractal {
 
-    //Pointers to generate types of sets
+    // Pointers to generate types of sets
     public static final int GENERATE_MANDELBROT = 0;
     public static final int GENERATE_JULIA = 1;
     public static final int GENERATE_CUSTOM = 2;
 
-    //Start and end of the coordinate plane
-    BigDecimal RESTART = BigDecimal.valueOf(-2);
-    BigDecimal REEND = BigDecimal.valueOf(1);
-    BigDecimal IMSTART = BigDecimal.valueOf(-1);
-    BigDecimal IMEND = BigDecimal.valueOf(1);
+    // Start and end of the coordinate plane
+    double RESTART = -2.5;
+    double REEND = 1;
+    double IMSTART = -1;
+    double IMEND = 1;
     private int[][] iterationsArr;
     private int startx;
     private int starty;
     private double height;
     private double width;
+    private double real;
+    private double imaginary;
     private int FRACTAL_TYPE;
 
-    //Default max iterations
+    // Default max iterations
     int ITERATIONS = 255;
 
     public Fractal() {
@@ -40,61 +44,58 @@ public class Fractal {
         switch (FRACTAL_TYPE) {
 
             case 0:
-                //Computes iterations for Mandelbrot set
+                // Computes iterations for Mandelbrot set
 
-                while (z.abs().compareTo(BigDecimal.valueOf(2.0)) < 2.0 && iterationCounter < ITERATIONS) {
+                while (Math.pow(z.real, 2) + Math.pow(z.imaginary, 2) < 4 && iterationCounter < ITERATIONS) {
 
                     z = z.square().add(c);
                     iterationCounter += 1;
 
                 }
             case 1:
-                //Computes iterations for Julia set
+                // Computes iterations for Julia set
 
-                //Default number for Julia set
+                // Default number for Julia set
 
-                BigDecimal r = new BigDecimal("-0.4");
+                real = -0.4;
 
+                imaginary = -0.58;
 
-                BigDecimal i = new BigDecimal("-0.58");
+                c = new Complex(real, imaginary);
 
-                c = new Complex(r, i);
-
-                int compare = z.abs().compareTo(BigDecimal.valueOf(2));
-
-
-
-                while (compare == -1 && iterationCounter < ITERATIONS) {
+                while (Math.pow(z.real, 2) + Math.pow(z.imaginary, 2) < 4 && iterationCounter < ITERATIONS) {
 
                     z = z.square().add(c);
                     iterationCounter += 1;
                 }
 
+                // Grabs a complex number from juliaComplex() text field if one is present
 
-                //Grabs a complex number from juliaComplex() text field if one is present
-
-                /*if(!juliaTextField.getText().isEmpty()) {
-
-                String[] complex;
-
-                complex = juliaComplex.getText().split(", );
-
-                c = new Complex(Double.parseDouble(complex[0].stripTrailing()), Double parseDouble(complex[1].stripTrailing()));
-
-
-                }*/
+                /*
+                 * if(!juliaTextField.getText().isEmpty()) {
+                 *
+                 * String[] complex;
+                 *
+                 * complex = juliaComplex.getText().split(", );
+                 *
+                 * c = new Complex(double.parsedouble(complex[0].stripTrailing()), double
+                 * parsedouble(complex[1].stripTrailing()));
+                 *
+                 *
+                 * }
+                 */
 
             case 2:
-                //Computes iterations for a custom fractal
-                //Will add later
+                // Computes iterations for a custom fractal
+                // Will add later
 
         }
-
 
         return iterationCounter;
     }
 
-    public void GenerateFractal(BigDecimal RESTART, BigDecimal REEND, BigDecimal IMSTART, BigDecimal IMEND, double width, double height, int startx, int starty, int[][] iterationsArr, int FRACTAL_TYPE, int ITERATIONS) {
+    public void GenerateFractal(double RESTART, double REEND, double IMSTART, double IMEND, double width, double height,
+                                int startx, int starty, int[][] iterationsArr, int FRACTAL_TYPE, int ITERATIONS) {
 
         this.RESTART = RESTART;
         this.REEND = REEND;
@@ -115,32 +116,32 @@ public class Fractal {
         for (int x = startx; (double) x < width; x++) {
             for (int y = starty; (double) y < height; y++) {
 
-
-
-
-               BigDecimal real;
-               BigDecimal imaginary;
-
-              real = new BigDecimal(String.valueOf(RESTART.add(BigDecimal.valueOf(x)).divide(BigDecimal.valueOf(width), 2, RoundingMode.HALF_EVEN).multiply(REEND.subtract(RESTART))));
-              imaginary = new BigDecimal(String.valueOf(IMSTART.add(BigDecimal.valueOf(y)).divide(BigDecimal.valueOf(height), 2, RoundingMode.HALF_EVEN).multiply(IMEND.subtract(IMSTART))));
-
+                real = RESTART + (double) x / width * (REEND - RESTART);
+                imaginary = IMSTART + (double) y / height * (IMEND - IMSTART);
 
                 Complex c = new Complex(real, imaginary);
 
                 iterationsArr[x][y] = ComputeIterations(c, FRACTAL_TYPE);
 
+                float hue = 0.255f * this.iterationsArr[x][y] / ITERATIONS;
 
-                float hue = 0.255f * (float) iterationsArr[x][y] / (float) ITERATIONS;
                 float brightness = 0.0f;
 
-
                 if (this.iterationsArr[x][y] < ITERATIONS) {
-                    brightness = 1.0f;
+                    brightness = 1.0f + this.iterationsArr[x][y];
                 }
 
                 MainPanel.buffimg.setRGB(x, y, Color.HSBtoRGB(hue, SettingsPanel.Saturation, brightness));
 
             }
+
+        }
+
+        File file = new File("fractal.png");
+
+        try {
+            ImageIO.write(MainPanel.buffimg, "png", file);
+        } catch (Exception ignored) {
 
         }
 
