@@ -1,10 +1,7 @@
 package com.company;
 
-import com.company.MainPanel;
-
 import java.awt.*;
-import java.math.BigInteger;
-import java.math.RoundingMode;
+import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.io.File;
 
@@ -32,11 +29,9 @@ public class Fractal {
     // Default max iterations
     int ITERATIONS = 255;
 
-    public Fractal() {
 
-    }
 
-    public int ComputeIterations(Complex c, int FRACTAL_TYPE) {
+    private int ComputeIterations(Complex c, int FRACTAL_TYPE) {
 
         int iterationCounter = 0;
         Complex z = c;
@@ -46,6 +41,8 @@ public class Fractal {
             case 0:
                 // Computes iterations for Mandelbrot set
 
+
+                //Recursive mandelbrot function, f_c(z) = z^2 + c
                 while (Math.pow(z.real, 2) + Math.pow(z.imaginary, 2) < 4 && iterationCounter < ITERATIONS) {
 
                     z = z.square().add(c);
@@ -69,22 +66,6 @@ public class Fractal {
                     iterationCounter += 1;
                 }
 
-                // Grabs a complex number from juliaComplex() text field if one is present
-
-                /*
-                 * if(!juliaTextField.getText().isEmpty()) {
-                 *
-                 * String[] complex;
-                 *
-                 * complex = juliaComplex.getText().split(", );
-                 *
-                 * c = new Complex(double.parsedouble(complex[0].stripTrailing()), double
-                 * parsedouble(complex[1].stripTrailing()));
-                 *
-                 *
-                 * }
-                 */
-
             case 2:
                 // Computes iterations for a custom fractal
                 // Will add later
@@ -94,7 +75,7 @@ public class Fractal {
         return iterationCounter;
     }
 
-    public void GenerateFractal(double RESTART, double REEND, double IMSTART, double IMEND, double width, double height,
+    public void FractalSettings(double RESTART, double REEND, double IMSTART, double IMEND, double width, double height,
                                 int startx, int starty, int[][] iterationsArr, int FRACTAL_TYPE, int ITERATIONS) {
 
         this.RESTART = RESTART;
@@ -113,6 +94,10 @@ public class Fractal {
 
     void Fractal() {
 
+        float hue = 0;
+        float brightness;
+
+        //Nested for loop to traverse each pixel on screen
         for (int x = startx; (double) x < width; x++) {
             for (int y = starty; (double) y < height; y++) {
 
@@ -121,17 +106,21 @@ public class Fractal {
 
                 Complex c = new Complex(real, imaginary);
 
-                iterationsArr[x][y] = ComputeIterations(c, FRACTAL_TYPE);
 
-                float hue = 0.255f * this.iterationsArr[x][y] / ITERATIONS;
+                iterationsArr[x][y] = ComputeIterations(c, FRACTAL_TYPE); //Sets amount of iterations to determine whether the pixel at x,y is part of the mandelbrot set or not
 
-                float brightness = 0.0f;
 
+
+                brightness = 0.0f; //If pixel is part of the set, it's brightness is 0 (black)
+
+                //If amount of iterations for pixel at x,y is less than max iterations, it's given a brightness of 1 and a color
                 if (this.iterationsArr[x][y] < ITERATIONS) {
+                    hue = 0.255f * this.iterationsArr[x][y] / ITERATIONS;   //Color of pixel is determined by amount of iterations per pixel / max amount of iterations
+
                     brightness = 1.0f + this.iterationsArr[x][y];
                 }
 
-                MainPanel.buffimg.setRGB(x, y, Color.HSBtoRGB(hue, SettingsPanel.Saturation, brightness));
+                MainPanel.buffimg.setRGB(x, y, Color.HSBtoRGB(hue,1.0f , brightness)); //pixel at x,y is set
 
             }
 
@@ -141,7 +130,8 @@ public class Fractal {
 
         try {
             ImageIO.write(MainPanel.buffimg, "png", file);
-        } catch (Exception ignored) {
+        } catch (IOException e) {
+            e.printStackTrace();
 
         }
 
