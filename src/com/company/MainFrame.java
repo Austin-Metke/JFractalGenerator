@@ -13,6 +13,7 @@ public class MainFrame extends JFrame {
         setBounds(0, 0, width, height);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Exists the program upon window closure
         setVisible(true);
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
     }
 
 }

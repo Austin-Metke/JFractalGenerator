@@ -1,6 +1,7 @@
 package com.company;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -46,6 +47,7 @@ public class Fractal extends JPanel {
 
         int iterationCounter = 0;
         Complex z = c;
+        Complex zConjugate = z.conjugate();
         switch (this.FRACTAL_TYPE) {
             case MANDELBROT:
                 // Computes iterations for Mandelbrot set
@@ -54,6 +56,12 @@ public class Fractal extends JPanel {
                 while (z.abs() < 4 && iterationCounter < ITERATIONS) {
                     z = z.square().add(c);
                     iterationCounter += 1;
+
+                    zConjugate = zConjugate.square();
+                    if (zConjugate.abs() < 4 && iterationCounter < ITERATIONS) {
+                        zConjugate = zConjugate.add(c);
+                        iterationCounter += 1;
+                    }
                 }
                 break;
             case JULIA:
@@ -68,6 +76,12 @@ public class Fractal extends JPanel {
                 while (z.abs() < 4 && iterationCounter < ITERATIONS) {
                     z = z.square().add(c);
                     iterationCounter += 1;
+
+                    zConjugate = zConjugate.square();
+                    if (zConjugate.abs() < 4 && iterationCounter < ITERATIONS) {
+                        zConjugate = zConjugate.add(c);
+                        iterationCounter += 1;
+                    }
                 }
                 break;
             case 2:
@@ -86,6 +100,80 @@ public class Fractal extends JPanel {
         this.FRACTAL_TYPE = FRACTAL_TYPE;
     }
 
+    public void generateFractalMultiThreadedRefactored() {
+        System.out.println("MULTITHREADED");
+        long startTime = System.currentTimeMillis();
+        this.isDone = false;
+        this.fractalBounds = new FractalBounds(
+                xCenter - (width / 2.0) / (0.5 * zoom * width),
+                xCenter + (width / 2.0) / (0.5 * zoom * width),
+                yCenter - (height / 2.0) / (0.5 * zoom * height),
+                yCenter + (height / 2.0) / (0.5 * zoom * height)
+        );
+
+        double RESTART = this.fractalBounds.RESTART;
+        double REEND = this.fractalBounds.REEND;
+        double IMSTART = this.fractalBounds.IMSTART;
+        double IMEND = this.fractalBounds.IMEND;
+
+        int numThreads = Runtime.getRuntime().availableProcessors(); // Get the number of available CPU cores
+        System.out.printf("RUNNING WITH %d THREADS\n", numThreads);
+        ExecutorService executor = Executors.newFixedThreadPool(numThreads);
+
+        final int chunkSize = (int) (height / numThreads); // Divide the height into chunks
+
+        for (int threadId = 0; threadId < numThreads; threadId++) {
+            final int finalThreadId = threadId;
+            executor.submit(() -> {
+                int startY = finalThreadId * chunkSize;
+                int endY = (finalThreadId == numThreads - 1) ? (int) (height - 1) : (startY + chunkSize - 1);
+
+                for (int x = 0; x < width; x++) {
+                    repaint();
+
+                    for (int y = startY; y <= endY; y++) {
+                        // ... (rest of your fractal computation logic)
+                        float hue = 0;
+                        final float brightness;
+                        float brightness1;
+
+                        real = RESTART + ((x / width)) * (REEND - RESTART) / (this.zoom);
+                        imaginary = IMSTART + ((y / height)) * (IMEND - IMSTART) / (this.zoom);
+
+                        Complex c = new Complex(real, imaginary);
+
+                        iterationsArr[x][y] = computeIterations(c); //Sets amount of iterations to determine whether the pixel at x,y is part of the mandelbrot set or not
+
+                        this.buffimg.setRGB(x, y, mandelbrotColor(iterationsArr[x][y], ITERATIONS).getRGB()); //pixel at x,y is set
+                        this.repaint();
+                    }
+                    repaint();
+
+                }
+
+
+            });
+        }
+
+        executor.shutdown();
+        try {
+            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+            long endTime = System.currentTimeMillis();
+            System.out.printf("RENDERED IN %d milliseconds\n", (endTime-startTime));
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        File file = new File("fractal.png");
+
+        try {
+            ImageIO.write(this.buffimg, "png", file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     public void generateFractalMultiThreaded() {
 
         System.out.println("MULTITHREADED");
@@ -103,6 +191,7 @@ public class Fractal extends JPanel {
         double IMEND = this.fractalBounds.IMEND;
 
         int numThreads = Runtime.getRuntime().availableProcessors(); // Get the number of available CPU cores
+        System.out.printf("RUNNING WITH %d THREADS\n", numThreads);
         ExecutorService executor = Executors.newFixedThreadPool(numThreads);
 
         for (int threadId = 0; threadId < numThreads; threadId++) {
@@ -111,7 +200,7 @@ public class Fractal extends JPanel {
                 int startX = (int) (finalThreadId * width / numThreads);
                 int endX = (int) ((finalThreadId + 1) * width / numThreads);
 
-                for (int x = startX; x < endX; x++) {
+                for (int x = startX; x <= endX; x++) {
                     for (int y = 0; y < height; y++) {
                         float hue = 0;
                         final float brightness;
@@ -216,9 +305,9 @@ public class Fractal extends JPanel {
 
     public Fractal(int width, int height) {
         this.isDone = true;
-        this.xCenter = -0.5;
-        this.yCenter = 0;
-        this.zoom = 1;
+        this.xCenter = -0.65;
+        this.yCenter = 0.15;
+        this.zoom = 0.7;
         this.ITERATIONS = 255;
         this.fractalBounds = new FractalBounds();
         this.FRACTAL_TYPE = JULIA;
@@ -229,14 +318,47 @@ public class Fractal extends JPanel {
         setBounds(0, 0, width, height);
         setVisible(true);
         setLayout(null);  //No desired layout, hence null
-        addMouseWheelListener(e -> {
-            this.mouseX = e.getX();
-            this.mouseY = e.getY();
-            this.zoom = zoom * (e.getWheelRotation() > 0 ? 0.9 : 1.1);
-            this.xCenter = xCenter + (mouseX - this.width / 2.0) / (0.5 * zoom * this.width);
-            this.yCenter = yCenter + (mouseY - this.height / 2.0) / (0.5 * zoom * this.height);
 
+        addMouseWheelListener(e -> {
+            int mouseX = e.getX();
+            int mouseY = e.getY();
+            double zoomFactor = (e.getWheelRotation() > 0) ? 0.9 : 1.1;
+
+            // Calculate the coordinates of the mouse cursor in the fractal's coordinate system
+            double mouseXInFractal = xCenter + (mouseX - width / 2.0) / (0.5 * zoom * width);
+            double mouseYInFractal = yCenter + (mouseY - height / 2.0) / (0.5 * zoom * height);
+
+            // Update the zoom
+            zoom *= zoomFactor;
+
+            // Calculate the new center based on the mouse cursor position in the fractal's coordinate system
+            xCenter = mouseXInFractal - (mouseX - width / 2.0) / (0.5 * zoom * width);
+            yCenter = mouseYInFractal - (mouseY - height / 2.0) / (0.5 * zoom * height);
+
+            // Regenerate the fractal with the updated zoom and center
+            generateFractalMultiThreadedRefactored();
         });
+
+
+    }
+
+    private Color mandelbrotColor(int iterations, int maxIterations) {
+        if (iterations >= maxIterations) {
+            return Color.BLACK; // Point is in the Mandelbrot set
+        } else {
+            // Calculate the fractional part of the iteration count
+            double fractionalPart = (double) iterations / maxIterations;
+
+            Color startColor = new Color(0, 0, 128);
+            Color endColor = new Color(0, 206, 209);
+
+            // Linear interpolation between startColor and endColor
+            int red = (int) (startColor.getRed() * (1 - fractionalPart) + endColor.getRed() * fractionalPart);
+            int green = (int) (startColor.getGreen() * (1 - fractionalPart) + endColor.getGreen() * fractionalPart);
+            int blue = (int) (startColor.getBlue() * (1 - fractionalPart) + endColor.getBlue() * fractionalPart);
+
+            return new Color(red, green, blue);
+        }
     }
 
     public Fractal(int width, int height, FractalBounds fractalBounds, int FRACTAL_TYPE, double zoom, int ITERATIONS) {

@@ -1,6 +1,7 @@
 package com.company;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
@@ -27,7 +28,7 @@ public class SettingsFrame extends JFrame {
         setSize(800, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
-
+        setVisible(true);
         // Create a panel for the radio buttons
         JPanel radioPanel = new JPanel();
         mandelbrotRadioButton = new JRadioButton("Mandelbrot");
@@ -48,25 +49,19 @@ public class SettingsFrame extends JFrame {
         // Create the generate button
         generateButton = new JButton("Generate Fractal");
 
-        generateButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        generateButton.addActionListener(e -> {
 
-                if (juliaRadioButton.isSelected()) {
-                    String complex = juliaTextField.getText();
-                    fractal.setfractalType(Fractal.JULIA);
-                    Complex C = Complex.parse(complex);
+            if (juliaRadioButton.isSelected()) {
+                String complex = juliaTextField.getText();
+                fractal.setfractalType(Fractal.JULIA);
+                Complex C = Complex.parse(complex);
+                fractal.setC(C);
 
-                    fractal.setC(C);
-                    fractal.generateFractalMultiThreaded();
-
-                } else if(mandelbrotRadioButton.isSelected()) {
-                    System.out.println("TEST");
-                    fractal.setfractalType(Fractal.MANDELBROT);
-                    fractal.generateFractalMultiThreaded();
-                    fractal.repaint();
-                }
+            } else if(mandelbrotRadioButton.isSelected()) {
+                fractal.setfractalType(Fractal.MANDELBROT);
             }
+
+            fractal.generateFractalMultiThreadedRefactored();
         });
 
         // Add components to the frame
@@ -75,34 +70,23 @@ public class SettingsFrame extends JFrame {
         add(generateButton, BorderLayout.SOUTH);
 
         // Add an ActionListener to the Julia radio button to enable/disable the text field
-        juliaRadioButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                juliaTextField.setEnabled(true);
-            }
-        });
+        juliaRadioButton.addActionListener(e -> juliaTextField.setEnabled(true));
 
-        mandelbrotRadioButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                juliaTextField.setEnabled(false);
-            }
-        });
+        mandelbrotRadioButton.addActionListener(e -> juliaTextField.setEnabled(false));
 
 
         // Create the zoom controls
         JPanel zoomPanel = new JPanel();
         zoomLabel = new JLabel("Zoom Level: 1.0");
         zoomSlider = new JSlider(10, 100, 100); // Values represent zoom levels from 0.1 to 10.0
-        zoomSlider.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                double zoomValue = zoomSlider.getValue() / 10.0;
-                zoomLabel.setText("Zoom Level: " + zoomValue);
-            }
+        zoomSlider.addChangeListener(e -> {
+            double zoomValue = zoomSlider.getValue() / 10.0;
+            zoomLabel.setText("Zoom Level: " + zoomValue);
         });
         zoomPanel.add(zoomLabel);
         zoomPanel.add(zoomSlider);
-
+        zoomPanel.setVisible(true);
+        this.add(zoomPanel);
+        this.setLayout(new FlowLayout());
     }
 }

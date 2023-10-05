@@ -24,6 +24,10 @@ class Complex {
         return Math.sqrt(this.real*this.real + this.imaginary*this.imaginary);
     }
 
+    public double magnitudeSquared() {
+        return this.real*this.real + this.imaginary*this.imaginary;
+    }
+
     public Complex square() {
         return new Complex(Math.pow(this.real, 2) - Math.pow(this.imaginary, 2), 2*this.real*this.imaginary);
     }
@@ -32,6 +36,10 @@ class Complex {
         this.real = this.real + z.real;
         this.imaginary = this.imaginary + z.imaginary;
         return this;
+    }
+
+    public Complex conjugate() {
+        return new Complex(this.real, this.imaginary*-1);
     }
 
 
