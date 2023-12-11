@@ -1,33 +1,51 @@
 package com.company;
 
+import javax.swing.*;
+import java.awt.DisplayMode;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 public class Main {
 
-    //Width and Height of fractal image
-
-    public static double WIDTH = 1920;
-    public static double HEIGHT = 1080;
-
-    /**
-     *  When the program runs, this builds the fractal image itself and the window to display it
-     */
     public static void main(String[] args) {
+        // Get the local graphics environment
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 
-        new MainFrame();  //Using settings in MainFrame()
+        // Get the default screen device
+        GraphicsDevice defaultScreen = ge.getDefaultScreenDevice();
 
-        int[][] iterationsArr = new int[(int)WIDTH][(int)HEIGHT];  //2-D array used for each pixel in the fractal's dimensions; stores amount of iterations per pixel
+        // Get the current display mode (resolution) of the default screen device
+        DisplayMode mode = defaultScreen.getDisplayMode();
 
-        Fractal fractal = new Fractal();
+        // Extract the width and height from the DisplayMode
+        int width = 3840;
+        int height = 2160;
 
-        //In reality didn't need to make a GenerateFractal method, could've just made everything a constant
-        fractal.FractalSettings(fractal.RESTART, fractal.REEND, fractal.IMSTART, fractal.IMEND, WIDTH, HEIGHT, 0, 0, iterationsArr, Fractal.GENERATE_MANDELBROT, fractal.ITERATIONS);
+        Fractal fractal = new Fractal(width, height, Fractal.MANDELBROT, 100);
+        SwingUtilities.invokeLater(() -> new MainFrame(width, height, fractal));
 
 
-        fractal.Fractal();
+        SwingUtilities.invokeLater(() -> new SettingsFrame(fractal));
 
+
+//        long startTime = System.currentTimeMillis();
+//        fractal.generateFractalMultiThreaded();
+//        long endTime = System.currentTimeMillis();
+//        long executionTime = endTime - startTime;
+//        System.out.println("Execution time (Multithreaded): " + executionTime + " milliseconds");
+//
+//        startTime = System.currentTimeMillis();
+//        fractal.generateFractal();
+//        endTime = System.currentTimeMillis();
+//        executionTime = endTime - startTime;
+//        System.out.println("Execution time (Singlethreaded): " + executionTime + " milliseconds");
+
+
+        long startTime = System.currentTimeMillis();
+        fractal.generateFractalMultiThreadedRefactored();
+        //fractal.generateFractalMultiThreadedRefactored();
+        long endTime = System.currentTimeMillis();
+        long executionTime = endTime - startTime;
+        System.out.println("Execution time (Multithreaded (Refactored)): " + executionTime + " milliseconds");
 
     }
-
-
-
-
 }
